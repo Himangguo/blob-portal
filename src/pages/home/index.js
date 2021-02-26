@@ -1,13 +1,15 @@
 import React, { memo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import HeaderMenu from "./header-menu";
+
 import { HomeWrapper } from "./style";
-export default memo(function Home() {
-  const { userInfo } = useSelector((state) => ({
-    userInfo: state.getIn(["userInfo"]),
-  }));
+import { renderRoutes } from "react-router-config";
+import { Switch } from "react-router-dom";
+export default memo(function Home(props) {
+ 
   return (
     <HomeWrapper>
-      Home---{userInfo.id}--{userInfo.name}
+      <HeaderMenu />
+      <Switch>{renderRoutes(props.route.routes)}</Switch>
     </HomeWrapper>
   );
 });

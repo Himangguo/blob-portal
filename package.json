@@ -3,21 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.5.0",
     "@craco/craco": "^6.1.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "antd": "^4.12.3",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
+    "craco-less": "^1.17.1",
     "immutable": "^4.0.0-rc.12",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-loading-dev": "^1.0.4",
+    "react-markdown": "^5.0.3",
     "react-redux": "^7.2.2",
     "react-router-config": "^5.1.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
+    "react-syntax-highlighter": "^15.4.3",
     "redux": "^4.0.5",
+    "remark-gfm": "^1.0.0",
     "styled-components": "^5.2.1",
     "web-vitals": "^1.0.1"
   },
@@ -25,7 +32,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": [
