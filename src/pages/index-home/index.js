@@ -7,7 +7,7 @@ export default memo(function IndexHome(props) {
   const _getArticleListPage = useCallback(() => {
     getArticleListPage(0, 10).then((res) => {
       console.log("getArticleListPage", res);
-      setList(res);
+      setList(res.list);
     });
   });
   useEffect(() => {
