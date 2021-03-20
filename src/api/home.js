@@ -10,3 +10,11 @@ export const getArticleListPage = (offset, size) => {
     },
   });
 };
+
+// 获取背景乐
+export const getBgMusicId = ()=>{
+  return request({
+    method:"get",
+    url:"/persona/music/getBgMusicId"
+  })
+}

@@ -3,9 +3,6 @@ import { Tag } from "antd";
 import { ListItemWrapper } from "./style";
 import PropTypes from "prop-types";
 function ListItem(props) {
-  useEffect(() => {
-    console.log(props);
-  }, []);
   const goArticleDetail = useCallback((e) => {
     e.preventDefault();
     props.history.push(`/home/list/detail/${props.id}`);

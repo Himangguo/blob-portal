@@ -1,6 +1,6 @@
 import axios from "axios";
 import { TIME_OUT, BASE_URL } from "./config";
-
+import { message } from "antd";
 // 创建请求实例
 const instance = axios.create({
   baseURL: BASE_URL,
@@ -26,6 +26,7 @@ instance.interceptors.response.use(
   (err) => {
     if (err && err.response) {
       console.error(err.response.data);
+      message.error(err.response.data);
     }
   }
 );
