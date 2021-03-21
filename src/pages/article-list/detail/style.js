@@ -10,21 +10,23 @@ export const ArticleDetailWrapper = styled.div`
     background-color: #fff;
     .comment-box {
       padding: 20px;
-      img {
-        width: 25px;
-        height: 25px;
-      }
       .commit-submit {
         width: 100%;
         display: flex;
         align-items: center;
-        padding:10px;
-        background-color:#f4f5f5;
+        padding: 10px;
+        background-color: #f4f5f5;
+        .reply-box {
+          display:flex;
+          .reply-name {
+            color: #d56464;
+          }
+        }
       }
       .button-box {
-          display:flex;
-          align-items:center;
-          margin-left:10px;
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
       }
     }
   }

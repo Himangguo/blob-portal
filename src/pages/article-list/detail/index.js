@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState, useCallback } from "react";
+import React, { memo, useEffect, useState, useCallback, useRef } from "react";
 
 import {
   message,
@@ -11,6 +11,9 @@ import {
   Modal,
   Button,
   Form,
+  Empty,
+  Alert,
+  Tag,
 } from "antd";
 import {
   LikeFilled,
@@ -30,6 +33,7 @@ import {
   anonymousComment,
   verifyIdentity,
   realNameComment,
+  replyToCommentById,
 } from "@/api/article";
 export default memo(function ArticleDetail(props) {
   const { TextArea } = Input;
@@ -44,6 +48,12 @@ export default memo(function ArticleDetail(props) {
   const [commentContent, setcommentContent] = useState("");
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [replyComment, setreplyComment] = useState({
+    id: null,
+    name: null,
+  });
+  const commentRef = useRef();
+  const inputRef = useRef();
   useEffect(() => {
     console.log(props.match.params.id);
     _getrticleDetailById(props.match.params.id);
@@ -58,7 +68,7 @@ export default memo(function ArticleDetail(props) {
         message.success("感谢您的赞赏");
       }
     });
-  }, [thumbsupById]);
+  }, [thumbsupById, articleId]);
   function _getrticleDetailById(id) {
     getrticleDetailById(id).then((res) => {
       console.log("getrticleDetailById", res);
@@ -87,15 +97,44 @@ export default memo(function ArticleDetail(props) {
     verifyIdentity(username, password).then((res) => {
       console.log("verifyIdentity", res);
       if (res) {
-        realNameComment(articleId, commentContent, res.data.id).then((res) => {
-          console.log("realNameComment", res);
-          if (res) {
-            message.success("实名发表评论成功");
-            setverifyVisible(false);
-            setconfirmLoading(false);
-            _getCommentList(articleId);
-          }
-        });
+        if (replyComment.id) {
+          // 回复评论
+          replyToCommentById(
+            articleId,
+            commentContent,
+            replyComment.id,
+            res.data.id
+          ).then((res) => {
+            console.log("replyToCommentById", res);
+            if (res) {
+              message.success("实名回复成功");
+              setverifyVisible(false);
+              setconfirmLoading(false);
+              _getCommentList(articleId);
+              setcommentContent("");
+              setreplyComment({
+                id: null,
+                name: null,
+              });
+            }
+          });
+        } else {
+          // 发表动态评论
+          realNameComment(articleId, commentContent, res.data.id).then(
+            (res) => {
+              console.log("realNameComment", res);
+              if (res) {
+                message.success("实名发表评论成功");
+                setverifyVisible(false);
+                setconfirmLoading(false);
+                _getCommentList(articleId);
+                setcommentContent("");
+              }
+            }
+          );
+        }
+      } else {
+        setconfirmLoading(false);
       }
     });
   }
@@ -104,27 +143,60 @@ export default memo(function ArticleDetail(props) {
   }
   function handleAnonymousSubmit() {
     console.log("匿名评论", commentContent);
-    anonymousComment(articleId, commentContent).then((res) => {
-      console.log("anonymousComment", res);
-      if (res.result) {
-        message.success("评论成功");
-        _getCommentList(articleId);
-      }
-    });
+    if (replyComment.id) {
+      // 回复评论
+      replyToCommentById(articleId, commentContent, replyComment.id).then(
+        (res) => {
+          console.log("replyToCommentById", res);
+          if (res) {
+            message.success("匿名回复成功");
+            _getCommentList(articleId);
+            setcommentContent("");
+            setreplyComment({
+              id: null,
+              name: null,
+            });
+          }
+        }
+      );
+    } else {
+      // 发表动态评论
+      anonymousComment(articleId, commentContent).then((res) => {
+        console.log("anonymousComment", res);
+        if (res) {
+          message.success("匿名评论成功");
+          setcommentContent("");
+          _getCommentList(articleId);
+        }
+      });
+    }
   }
   function handleVerifySubmit() {
     console.log("实名评论", commentContent);
     setverifyVisible(true);
   }
-  const ExampleComment = ({
-    children,
-    id,
-    name,
-    avatar,
-    content,
-    time,
-    valid,
-  }) => (
+  const handleGoComment = useCallback(() => {
+    commentRef.current.scrollIntoView();
+    inputRef.current.focus();
+  }, [commentRef, inputRef]);
+  const replyToComment = useCallback(
+    (id, name) => {
+      setreplyComment({
+        id,
+        name,
+      });
+      handleGoComment();
+      console.log(id, name);
+    },
+    [setreplyComment]
+  );
+  const handleTagClose = useCallback(() => {
+    setreplyComment({
+      id: null,
+      name: null,
+    });
+  }, [setreplyComment]);
+  const ExampleComment = ({ children, id, name, avatar, content, time }) => (
     <Comment
       style={{ background: "#fafbfc", marginBottom: "10px" }}
       author={<a>{name}</a>}
@@ -135,6 +207,14 @@ export default memo(function ArticleDetail(props) {
         </Tooltip>
       }
       content={<p className="comment-content">{content}</p>}
+      actions={[
+        <span
+          key="comment-basic-reply-to"
+          onClick={() => replyToComment(id, name)}
+        >
+          回复
+        </span>,
+      ]}
     >
       {children}
     </Comment>
@@ -150,7 +230,13 @@ export default memo(function ArticleDetail(props) {
               name={item.user.name}
               avatar={item.user.avatar}
               time={item.updateTime}
-              content={item.content}
+              content={
+                item.valid ? (
+                  item.content
+                ) : (
+                  <Alert message="该条评论已被隐藏" type="warning" />
+                )
+              }
               valid={item.valid}
             >
               {renderComment(item.children)}
@@ -164,7 +250,13 @@ export default memo(function ArticleDetail(props) {
               name="匿名用户"
               avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               time={item.updateTime}
-              content={item.content}
+              content={
+                item.valid ? (
+                  item.content
+                ) : (
+                  <Alert message="该条评论已被隐藏" type="warning" />
+                )
+              }
               valid={item.valid}
             >
               {renderComment(item.children)}
@@ -180,7 +272,13 @@ export default memo(function ArticleDetail(props) {
               name={item.user.name}
               avatar={item.user.avatar}
               time={item.updateTime}
-              content={item.content}
+              content={
+                item.valid ? (
+                  item.content
+                ) : (
+                  <Alert message="该条评论已被隐藏" type="warning" />
+                )
+              }
               valid={item.valid}
             />
           );
@@ -192,7 +290,13 @@ export default memo(function ArticleDetail(props) {
               name="匿名用户"
               avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
               time={item.updateTime}
-              content={item.content}
+              content={
+                item.valid ? (
+                  item.content
+                ) : (
+                  <Alert message="该条评论已被隐藏" type="warning" />
+                )
+              }
               valid={item.valid}
             />
           );
@@ -204,13 +308,31 @@ export default memo(function ArticleDetail(props) {
     <ArticleDetailWrapper>
       <div className="article-content">
         <ArticleRender title={title} content={content} />
-        <div className="comment-box">
+        <div className="comment-box" ref={commentRef}>
           <Divider orientation="left" plain>
             评论区
           </Divider>
           <div className="commit-submit">
+            {replyComment.id && (
+              <Tag
+                style={{ display: "flex", alignItems: "center" }}
+                closable
+                onClose={(e) => {
+                  e.preventDefault();
+                  handleTagClose();
+                }}
+              >
+                <div className="reply-box">
+                  <div>回复：</div>
+                  <div className="reply-name">{replyComment.name}</div>
+                </div>
+              </Tag>
+            )}
+
             <TextArea
+              ref={inputRef}
               placeholder="输入评论..."
+              value={commentContent}
               onChange={handleCommentChange}
             />
             {commentContent.length > 0 && (
@@ -223,6 +345,9 @@ export default memo(function ArticleDetail(props) {
             )}
           </div>
           {renderComment(commentList)}
+          {commentList.length === 0 && (
+            <Empty style={{ marginTop: "70px" }} description="占时没有评论奥" />
+          )}
         </div>
       </div>
       <div className="right-action">
@@ -231,9 +356,16 @@ export default memo(function ArticleDetail(props) {
             <LikeFilled />
           </div>
         </Badge>
-        <div className="comment-btn btn" title="评论">
-          <CommentOutlined />
-        </div>
+        <Badge count={commentList.length}>
+          <div
+            className="comment-btn btn"
+            title="评论"
+            onClick={handleGoComment}
+          >
+            <CommentOutlined />
+          </div>
+        </Badge>
+
         <div className="leave-msg btn" title="留言">
           <FormOutlined />
         </div>

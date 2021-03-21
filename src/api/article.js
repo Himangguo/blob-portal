@@ -68,3 +68,27 @@ export const verifyIdentity = (name, password) => {
     },
   });
 };
+
+// 回复评论
+export const replyToCommentById = (momentId, content, commentId, userId) => {
+  if (userId) {
+    return request({
+      method: "post",
+      url: `/comment/${commentId}/reply`,
+      data: {
+        momentId,
+        content,
+        userId,
+      },
+    });
+  } else {
+    return request({
+      method: "post",
+      url: `/comment/${commentId}/reply`,
+      data: {
+        momentId,
+        content,
+      },
+    });
+  }
+};
