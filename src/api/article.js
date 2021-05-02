@@ -92,3 +92,11 @@ export const replyToCommentById = (momentId, content, commentId, userId) => {
     });
   }
 };
+
+// 获取年月结构的文章列表
+export const getOrderList = () => {
+  return request({
+    method: "get",
+    url: `/moment/getOrderList`,
+  });
+};

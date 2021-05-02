@@ -24,6 +24,9 @@ export default memo(function IndexHome(props) {
               label={item.labels}
               title={item.title}
               content={item.content}
+              valid={item.valid}
+              pictures={item.pictures}
+              updateTime={item.updateTime}
               id={item.id}
             />
           );
