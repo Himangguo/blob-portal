@@ -100,3 +100,10 @@ export const getOrderList = () => {
     url: `/moment/getOrderList`,
   });
 };
+
+export const getArticleOfLabel = ()=>{
+  return request({
+    method:"get",
+    url:"/label/labelToArticle"
+  })
+}
