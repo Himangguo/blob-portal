@@ -23,30 +23,32 @@ export const thumbsupById = (momentId) => {
 };
 
 // 获取评论列表
-export const getCommentList = (momentId) => {
+export const getCommentList = (momentId,type) => {
   return request({
     method: "get",
     url: "/comment",
     params: {
       momentId,
+      type
     },
   });
 };
 
 // 匿名评论
-export const anonymousComment = (momentId, content) => {
+export const anonymousComment = (momentId, content, type) => {
   return request({
     method: "post",
     url: "/comment",
     data: {
       momentId,
       content,
+      type
     },
   });
 };
 
 // 实名评论
-export const realNameComment = (momentId, content, userId) => {
+export const realNameComment = (momentId, content, userId,type) => {
   return request({
     method: "post",
     url: "/comment",
@@ -54,6 +56,7 @@ export const realNameComment = (momentId, content, userId) => {
       momentId,
       content,
       userId,
+      type
     },
   });
 };
@@ -70,7 +73,7 @@ export const verifyIdentity = (name, password) => {
 };
 
 // 回复评论
-export const replyToCommentById = (momentId, content, commentId, userId) => {
+export const replyToCommentById = (momentId, content, commentId, userId,type) => {
   if (userId) {
     return request({
       method: "post",
@@ -79,6 +82,7 @@ export const replyToCommentById = (momentId, content, commentId, userId) => {
         momentId,
         content,
         userId,
+        type
       },
     });
   } else {
@@ -88,6 +92,7 @@ export const replyToCommentById = (momentId, content, commentId, userId) => {
       data: {
         momentId,
         content,
+        type
       },
     });
   }

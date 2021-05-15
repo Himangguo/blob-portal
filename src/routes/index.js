@@ -8,7 +8,6 @@ const ArticleList = lazy(() => import("@/pages/article-list"));
 const ArticleDetail = lazy(() => import("@/pages/article-list/detail"));
 const Labels = lazy(() => import("@/pages/labels"));
 const About = lazy(() => import("@/pages/about"));
-const LeaveMsg = lazy(() => import("@/pages/leave-msg"));
 // 路由配置对象
 const routes = [
   {
@@ -55,11 +54,6 @@ const routes = [
         path: "/home/about",
         name: "关于博主",
         component: About,
-      },
-      {
-        path: "/home/leaveMsg",
-        name: "给我留言",
-        component: LeaveMsg,
       },
     ],
   },

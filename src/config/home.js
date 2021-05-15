@@ -15,8 +15,4 @@ export const headerMenuList = [
     name: "关于博主",
     path: "/home/about",
   },
-  {
-    name: "给我留言",
-    path: "/home/leaveMsg",
-  },
 ];

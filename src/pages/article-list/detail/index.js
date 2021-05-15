@@ -80,7 +80,7 @@ export default memo(function ArticleDetail(props) {
   }
   const _getCommentList = useCallback(
     (momentId) => {
-      getCommentList(momentId).then((res) => {
+      getCommentList(momentId,1).then((res) => {
         console.log("getCommentList", res);
         setCommentList(res);
       });
@@ -103,7 +103,8 @@ export default memo(function ArticleDetail(props) {
             articleId,
             commentContent,
             replyComment.id,
-            res.data.id
+            res.data.id,
+            1
           ).then((res) => {
             console.log("replyToCommentById", res);
             if (res) {
@@ -120,7 +121,7 @@ export default memo(function ArticleDetail(props) {
           });
         } else {
           // 发表动态评论
-          realNameComment(articleId, commentContent, res.data.id).then(
+          realNameComment(articleId, commentContent, res.data.id,1).then(
             (res) => {
               console.log("realNameComment", res);
               if (res) {
@@ -145,7 +146,7 @@ export default memo(function ArticleDetail(props) {
     console.log("匿名评论", commentContent);
     if (replyComment.id) {
       // 回复评论
-      replyToCommentById(articleId, commentContent, replyComment.id).then(
+      replyToCommentById(articleId, commentContent, replyComment.id,null,1).then(
         (res) => {
           console.log("replyToCommentById", res);
           if (res) {
@@ -161,7 +162,7 @@ export default memo(function ArticleDetail(props) {
       );
     } else {
       // 发表动态评论
-      anonymousComment(articleId, commentContent).then((res) => {
+      anonymousComment(articleId, commentContent,1).then((res) => {
         console.log("anonymousComment", res);
         if (res) {
           message.success("匿名评论成功");
