@@ -27,7 +27,7 @@ import "moment/locale/zh-cn";
 import ArticleRender from "./article-render";
 import { ArticleDetailWrapper } from "./style";
 import {
-  getrticleDetailById,
+  getArticleDetailById,
   thumbsupById,
   getCommentList,
   anonymousComment,
@@ -70,8 +70,8 @@ export default memo(function ArticleDetail(props) {
     });
   }, [thumbsupById, articleId]);
   function _getrticleDetailById(id) {
-    getrticleDetailById(id).then((res) => {
-      console.log("getrticleDetailById", res);
+    getArticleDetailById(id).then((res) => {
+      console.log("getArticleDetailById", res);
       setTitle(res[0].title);
       setContent(res[0].content);
       setarticleId(res[0].id);
