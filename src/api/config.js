@@ -1,4 +1,4 @@
-const devBaseUrl = "http://localhost:8000";
+const devBaseUrl = "http://39.108.236.42:8001";
 const proBaseUrl = "http://39.108.236.42:8001";
 // 超时时间
 const TIME_OUT = 5000; 
